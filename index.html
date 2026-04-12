@@ -1,25 +1,148 @@
 <!DOCTYPE html>
 <html lang="ky">
 <head>
-    <meta charset="UTF-8">
-    <title>Менин биринчи проектиим</title>
+<meta charset="UTF-8">
+<title>💰 Финансы Трекер</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-        }
+<style>
+body {
+  font-family: Arial;
+  background: #f4f4f4;
+  text-align: center;
+}
 
-        .box {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 50px;
+.container {
+  background: white;
+  padding: 20px;
+  margin: 50px auto;
+  width: 300px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px gray;
+}
+
+input {
+  width: 90%;
+  padding: 10px;
+  margin: 5px;
+}
+
+button {
+  padding: 10px;
+  margin: 5px;
+  background: green;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background: darkgreen;
+}
+
+.expense-list {
+  text-align: left;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>💰 Финансы Трекер</h2>
+
+  <h3>Баланс</h3>
+  <input type="number" id="balance" placeholder="Акча (сом)">
+  <button onclick="saveBalance()">Сактоо</button>
+
+  <h3>Чыгым кошуу</h3>
+  <input type="number" id="expense" placeholder="Сумма">
+  <button onclick="addExpense()">Кошуу</button>
+
+  <h3>📊 Жыйынтык</h3>
+  <p id="total">Жалпы чыгым: 0</p>
+  <p id="left">Калды: 0</p>
+  <p id="days">Канча күнгө жетет: 0</p>
+
+  <h3>🧾 Чыгымдар</h3>
+  <ul id="list" class="expense-list"></ul>
+
+  <button onclick="clearData()">❌ Баарын өчүрүү</button>
+</div>
+
+<script>
+let balance = 0;
+let expenses = [];
+
+// Жүктөлгөндө маалыматты алабыз
+window.onload = function() {
+  let savedBalance = localStorage.getItem("balance");
+  let savedExpenses = localStorage.getItem("expenses");
+
+  if (savedBalance) balance = Number(savedBalance);
+  if (savedExpenses) expenses = JSON.parse(savedExpenses);
+
+  document.getElementById("balance").value = balance;
+
+  renderList();
+  updateUI();
+};
+
+function saveBalance() {
+  balance = Number(document.getElementById("balance").value);
+  localStorage.setItem("balance", balance);
+  updateUI();
+}
+
+function addExpense() {
+  let exp = Number(document.getElementById("expense").value);
+  if (exp <= 0) return;
+
+  expenses.push(exp);
+  localStorage.setItem("expenses", JSON.stringify(expenses));
+
+  renderList();
+  updateUI();
+}
+
+function renderList() {
+  let list = document.getElementById("list");
+  list.innerHTML = "";
+
+  expenses.forEach((exp) => {
+    let li = document.createElement("li");
+    li.innerText = "Чыгым: " + exp + " сом";
+    list.appendChild(li);
+  });
+}
+
+function updateUI() {
+  let total = expenses.reduce((a, b) => a + b, 0);
+  let left = balance - total;
+
+  let avg = expenses.length > 0 ? total / expenses.length : 0;
+  let days = avg > 0 ? (left / avg).toFixed(1) : 0;
+
+  document.getElementById("total").innerText =
+    "Жалпы чыгым: " + total;
+
+  document.getElementById("left").innerText =
+    "Калды: " + left;
+
+  document.getElementById("days").innerText =
+    "Канча күнгө жетет: " + days;
+}
+
+function clearData() {
+  localStorage.clear();
+  balance = 0;
+  expenses = [];
+  renderList();
+  updateUI();
+}
+</script>
+
+</body>
+</html>px;
             border-radius: 25px;
             backdrop-filter: blur(10px);
             box-shadow: 0 15px 40px rgba(0,0,0,0.3);
